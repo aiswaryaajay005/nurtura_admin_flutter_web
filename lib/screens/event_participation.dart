@@ -1,37 +1,47 @@
 import 'package:admin_app/main.dart';
 import 'package:flutter/material.dart';
 
-class ViewEvent extends StatefulWidget {
-  const ViewEvent({super.key});
+class EventParticipation extends StatefulWidget {
+  const EventParticipation({super.key});
 
   @override
-  State<ViewEvent> createState() => _ViewEventState();
+  State<EventParticipation> createState() => _EventParticipationState();
 }
 
-class _ViewEventState extends State<ViewEvent> {
-  List<Map<String, dynamic>> eventlist = [];
+class _EventParticipationState extends State<EventParticipation> {
+  List<Map<String, dynamic>> participantList = [];
   @override
   void initState() {
     super.initState();
-    fetchevent();
+    fetchParticipant();
   }
 
-  Future<void> fetchevent() async {
-    try {
-      final response = await supabase.from("tbl_event").select();
+  String statusCheck(int? status) {
+    if (status == null) {
+      return "Unknown"; // or any default value
+    }
+    return status == 1 ? "Will participate" : "Will not participate";
+  }
 
-      setState(() {
-        eventlist = response;
-      });
+  Future<void> fetchParticipant() async {
+    try {
+      final response = await supabase
+          .from("tbl_participate")
+          .select("*, tbl_child(*), tbl_event(*)");
+
+      if (response != null) {
+        setState(() {
+          participantList = List<Map<String, dynamic>>.from(response);
+        });
+      }
     } catch (e) {
-      // ignore: avoid_print
       print("Error: $e");
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return eventlist.isEmpty
+    return participantList.isEmpty
         ? Center(child: CircularProgressIndicator())
         : SingleChildScrollView(
             child: Column(
@@ -40,7 +50,7 @@ class _ViewEventState extends State<ViewEvent> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Staff Details",
+                    "Event participants",
                     style: TextStyle(
                         color: Colors.deepPurple,
                         fontFamily: 'Montserrat-Bold',
@@ -64,19 +74,25 @@ class _ViewEventState extends State<ViewEvent> {
                     color: Colors.deepPurple,
                   ),
                   columns: [
-                    DataColumn(label: Text("E.No")),
+                    DataColumn(label: Text("P.No")),
+                    DataColumn(label: Text("Child Name")),
                     DataColumn(label: Text("Event Name")),
-                    DataColumn(label: Text("Event Date")),
-                    DataColumn(label: Text("Event details")),
+                    DataColumn(label: Text("Participation Status")),
                   ],
-                  rows: eventlist.asMap().entries.map((entry) {
-                    int index = entry.key + 1; // Staff index
+                  rows: participantList.asMap().entries.map((entry) {
+                    int index = entry.key + 1;
                     Map<String, dynamic> event = entry.value;
+                    print("Status: ${event['participate_status']}");
+                    String status =
+                        statusCheck(event['participate_status'] as int?);
+
                     return DataRow(cells: [
-                      DataCell(Text(index.toString())), // Serial Number
-                      DataCell(Text(event['event_name'] ?? 'No Name')),
-                      DataCell(Text(event['event_date'] ?? 'No Date')),
-                      DataCell(Text(event['event_details'] ?? 'No Details')),
+                      DataCell(Text(index.toString())),
+                      DataCell(
+                          Text(event['tbl_child']?['child_name'] ?? 'N/A')),
+                      DataCell(
+                          Text(event['tbl_event']?['event_name'] ?? 'N/A')),
+                      DataCell(Text(status)),
                     ]);
                   }).toList(),
                 ),

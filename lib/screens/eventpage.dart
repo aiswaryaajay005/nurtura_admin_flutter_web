@@ -96,7 +96,7 @@ class _EventPageState extends State<EventPage> {
 
                   if (pickedDate != null) {
                     String formattedDate =
-                        "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
                     _datecontroller.text = formattedDate;
                   }
                 },

@@ -33,7 +33,10 @@ class _RejectedChildrenState extends State<RejectedChildren> {
   @override
   Widget build(BuildContext context) {
     return childlist.isEmpty
-        ? Center(child: CircularProgressIndicator())
+        ? Center(
+            child: Text(
+            'Nothing to view in here',
+          ))
         : SingleChildScrollView(
             child: Column(
               children: [
@@ -50,8 +53,20 @@ class _RejectedChildrenState extends State<RejectedChildren> {
                 ),
                 SizedBox(height: 20),
                 DataTable(
-                  border: TableBorder.all(),
-                  headingTextStyle: TextStyle(fontWeight: FontWeight.bold),
+                  columnSpacing: 30,
+                  headingRowHeight: 50,
+                  border: TableBorder(
+                    top: BorderSide(color: Colors.grey[300]!, width: 1),
+                    bottom: BorderSide(color: Colors.grey[300]!, width: 1),
+                    left: BorderSide(color: Colors.grey[300]!, width: 1),
+                    right: BorderSide(color: Colors.grey[300]!, width: 1),
+                    horizontalInside: BorderSide.none, // Removes row lines
+                  ),
+                  headingTextStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.deepPurple,
+                  ),
                   columns: [
                     DataColumn(
                         label: Text(

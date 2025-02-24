@@ -2,6 +2,7 @@ import 'package:admin_app/components/appbar.dart';
 import 'package:admin_app/components/sidebar.dart';
 import 'package:admin_app/screens/accepted_children.dart';
 import 'package:admin_app/screens/dashboard.dart';
+import 'package:admin_app/screens/event_participation.dart';
 import 'package:admin_app/screens/eventpage.dart';
 import 'package:admin_app/screens/manage_staff.dart';
 import 'package:admin_app/screens/mealmanagement.dart';
@@ -25,10 +26,11 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> _pages = [
     Dashboard(),
     ManageStaff(),
-    EventPage(),
-    MealPage(),
     ViewStaff(),
+    EventPage(),
     ViewEvent(),
+    EventParticipation(),
+    MealPage(),
     ViewMeal(),
     ViewChildren(),
     AcceptedChildren(),

@@ -8,28 +8,20 @@ class MyAppbar extends StatelessWidget {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.deepPurple, // Deep Purple background
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.deepPurple.shade200], // Light gradient
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Icon(
-            Icons.person,
-            color: Colors.white, // White color for the icon
+          CircleAvatar(
+            child: Icon(Icons.notifications),
+            backgroundColor: Colors.white,
           ),
-          SizedBox(
-            width: 10,
-          ),
-          Text(
-            "Admin",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
-          ),
-          SizedBox(
-            width: 40,
-          ),
+          SizedBox(width: 20),
         ],
       ),
     );

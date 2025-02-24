@@ -74,10 +74,17 @@ class _ViewChildrenState extends State<ViewChildren> {
                 ),
                 SizedBox(height: 20),
                 DataTable(
-                  border: TableBorder.all(),
-                  headingTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
+                  columnSpacing: 30,
+                  headingRowHeight: 50,
+                  border: TableBorder(
+                    top: BorderSide(color: Colors.grey[300]!, width: 1),
+                    bottom: BorderSide(color: Colors.grey[300]!, width: 1),
+                    left: BorderSide(color: Colors.grey[300]!, width: 1),
+                    right: BorderSide(color: Colors.grey[300]!, width: 1),
+                    horizontalInside: BorderSide.none, // Removes row lines
                   ),
+                  headingTextStyle: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.deepPurple),
                   columns: [
                     DataColumn(
                         label: Text(
@@ -154,6 +161,21 @@ class _ViewChildrenState extends State<ViewChildren> {
                       DataCell(Row(
                         children: [
                           TextButton(
+                            style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                    Colors.deepPurple[50]),
+                                foregroundColor: WidgetStatePropertyAll(
+                                  Colors.deepPurple,
+                                ),
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                ),
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                )),
                             onPressed: () {
                               int childId = child['id'];
                               acceptStatus(childId);
@@ -166,6 +188,21 @@ class _ViewChildrenState extends State<ViewChildren> {
                             ),
                           ),
                           TextButton(
+                            style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                    Colors.deepPurple[50]),
+                                foregroundColor: WidgetStatePropertyAll(
+                                  Colors.deepPurple,
+                                ),
+                                padding: WidgetStatePropertyAll(
+                                  EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                ),
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                )),
                             onPressed: () {
                               int childId = child['id'];
                               rejectStatus(childId);

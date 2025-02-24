@@ -9,113 +9,142 @@ class MySideBar extends StatefulWidget {
 }
 
 class _MySideBarState extends State<MySideBar> {
+  int selectedIndex = 0;
+
   final List<String> pages = [
     "Dashboard",
     "Manage Staff",
-    "Add Event",
-    "Add Meal",
     "View Staff",
+    "Add Event",
     "View Event",
+    "Event Participants",
+    "Add Meal",
     "View Meal Details",
     "View Children",
     "Accepted",
-    "Rejected"
+    "Rejected",
   ];
+
   final List<IconData> icons = [
-    Icons.house,
+    Icons.dashboard,
     Icons.person,
+    Icons.people,
     Icons.event,
-    Icons.food_bank,
-    Icons.verified_user,
-    Icons.schedule,
+    Icons.calendar_today,
+    Icons.groups,
+    Icons.fastfood,
     Icons.food_bank_outlined,
     Icons.child_care,
-    Icons.check,
-    Icons.not_interested_rounded,
+    Icons.check_circle,
+    Icons.cancel,
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 250, // Sidebar width
+      width: 250,
       decoration: BoxDecoration(
-        color: Colors.deepPurple,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.deepPurple.shade200], // Light gradient
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black26,
-            blurRadius: 8,
+            color: Colors.black12,
+            blurRadius: 10,
             offset: Offset(2, 2),
           ),
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(height: 50),
-              Center(
-                child: Text(
-                  "Nurtura",
+          // Logo/Header Section
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Text(
+              "Nurtura",
+              style: TextStyle(
+                fontFamily: 'Amsterdam',
+                color: Color(0xFF4A148C), // Deep Purple
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+
+          // Menu Items
+          Expanded(
+            child: ListView.builder(
+              itemCount: pages.length,
+              itemBuilder: (context, index) {
+                bool isSelected = selectedIndex == index;
+                return ListTile(
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                    widget.onItemSelected(index);
+                  },
+                  leading: Icon(
+                    icons[index],
+                    color: isSelected ? Colors.deepPurple : Colors.grey[700],
+                  ),
+                  title: Text(
+                    pages[index],
+                    style: TextStyle(
+                      color: isSelected ? Colors.deepPurple : Colors.grey[800],
+                      fontSize: 16,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.w500,
+                    ),
+                  ),
+                  tileColor: isSelected ? Colors.deepPurple[50] : null,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                );
+              },
+            ),
+          ),
+
+          // Profile Section (Bottom)
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 10,
+                    offset: Offset(2, 2),
+                  ),
+                ],
+              ),
+              child: ListTile(
+                leading: CircleAvatar(),
+                title: Text(
+                  "Admin",
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                subtitle: Text(
+                  "admin123@gmail.com",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
                   ),
                 ),
               ),
-              SizedBox(height: 20),
-              Divider(color: Colors.white38, thickness: 1),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: pages.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    onTap: () {
-                      widget.onItemSelected(index);
-                    },
-                    leading: Icon(
-                      icons[index],
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                    title: Text(
-                      pages[index],
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    hoverColor: Colors.deepPurple[300], // Hover effect
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  );
-                },
-              ),
-              Divider(color: Colors.white38, thickness: 1),
-            ],
+            ),
           ),
-          // Padding(
-          //   padding: const EdgeInsets.only(bottom: 20.0),
-          //   child: ListTile(
-          //     leading:
-          //         Icon(Icons.logout_outlined, color: Colors.white, size: 28),
-          //     title: Text(
-          //       "Logout",
-          //       style: TextStyle(
-          //         color: Colors.white,
-          //         fontSize: 16,
-          //         fontWeight: FontWeight.w500,
-          //       ),
-          //     ),
-          //     hoverColor: Colors.deepPurple[300], // Hover effect
-          //     onTap: () {},
-          //     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-          //   ),
-          // ),
         ],
       ),
     );
