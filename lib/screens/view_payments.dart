@@ -1,39 +1,41 @@
 import 'package:admin_app/main.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class AcceptedChildren extends StatefulWidget {
-  const AcceptedChildren({super.key});
+class ViewPayments extends StatefulWidget {
+  const ViewPayments({super.key});
 
   @override
-  State<AcceptedChildren> createState() => _AcceptedChildrenState();
+  State<ViewPayments> createState() => _ViewPaymentsState();
 }
 
-class _AcceptedChildrenState extends State<AcceptedChildren> {
-  List<Map<String, dynamic>> childlist = [];
-  @override
-  void initState() {
-    super.initState();
-    fetchChild();
-  }
-
-  Future<void> fetchChild() async {
+class _ViewPaymentsState extends State<ViewPayments> {
+  List<Map<String, dynamic>> payments = [];
+  Future<void> fetchPaymentDetails() async {
     try {
       final response =
-          await supabase.from("tbl_child").select().eq('child_status', 3);
-
+          await supabase.from('tbl_payment').select('*, tbl_child(*)');
       setState(() {
-        childlist = response;
+        payments = response;
       });
     } catch (e) {
-      // ignore: avoid_print
-      print("Error: $e");
+      print(e);
     }
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchPaymentDetails();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return childlist.isEmpty
-        ? Center(child: CircularProgressIndicator())
+    return payments.isEmpty
+        ? Center(
+            child: Text("No data Available"),
+          )
         : SingleChildScrollView(
             child: Column(
               children: [
@@ -41,7 +43,7 @@ class _AcceptedChildrenState extends State<AcceptedChildren> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Accepted Children",
+                    "View Payments",
                     style: TextStyle(
                         color: Colors.deepPurple,
                         fontFamily: 'Montserrat-Bold',
@@ -67,7 +69,7 @@ class _AcceptedChildrenState extends State<AcceptedChildren> {
                   columns: [
                     DataColumn(
                         label: Text(
-                      "C.No",
+                      "P.No",
                       style: TextStyle(
                         fontFamily: 'Montserrat-Regular',
                       ),
@@ -81,55 +83,32 @@ class _AcceptedChildrenState extends State<AcceptedChildren> {
                     )),
                     DataColumn(
                         label: Text(
-                      "Child Gender",
+                      "Paid Amount",
                       style: TextStyle(
                         fontFamily: 'Montserrat-Regular',
                       ),
                     )),
                     DataColumn(
                         label: Text(
-                      "Child DOB",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Child Allergy Details",
+                      "Paid Date",
                       style: TextStyle(
                         fontFamily: 'Montserrat-Regular',
                       ),
                     )),
                   ],
-                  rows: childlist.asMap().entries.map((entry) {
-                    int index = entry.key + 1; // Staff index
-                    Map<String, dynamic> child = entry.value;
+                  rows: payments.asMap().entries.map((entry) {
+                    int index = entry.key + 1;
+                    DateTime dateTime =
+                        DateTime.parse(payments[entry.key]['created_at']);
+                    String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(dateTime);
+                    Map<String, dynamic> pay = entry.value;
                     return DataRow(cells: [
-                      DataCell(Text(index.toString())), // Serial Number
-                      DataCell(Text(
-                        child['child_name'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
-                      DataCell(Text(
-                        child['child_gender'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
-                      DataCell(Text(
-                        child['child_dob'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
-                      DataCell(Text(
-                        child['child_allergy'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
+                      DataCell(Text(index.toString())),
+                      DataCell(
+                          Text(pay['tbl_child']?['child_name'] ?? 'Unknown')),
+                      DataCell(Text(pay['amount_due'].toString())),
+                      DataCell(Text(formattedDate))
                     ]);
                   }).toList(),
                 ),

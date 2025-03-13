@@ -2,6 +2,7 @@
 
 import 'package:admin_app/main.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ViewChildren extends StatefulWidget {
   const ViewChildren({super.key});
@@ -20,9 +21,10 @@ class _ViewChildrenState extends State<ViewChildren> {
 
   Future<void> acceptStatus(int childId) async {
     try {
-      await supabase
-          .from('tbl_child')
-          .update({'child_status': 1}).eq('id', childId);
+      await supabase.from('tbl_child').update({
+        'child_status': 1,
+      }).eq('id', childId);
+
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Accepted!")));
     } catch (e) {
@@ -44,7 +46,8 @@ class _ViewChildrenState extends State<ViewChildren> {
 
   Future<void> fetchChild() async {
     try {
-      final response = await supabase.from("tbl_child").select();
+      final response =
+          await supabase.from("tbl_child").select().eq('child_status', 0);
 
       setState(() {
         childlist = response;
@@ -57,7 +60,10 @@ class _ViewChildrenState extends State<ViewChildren> {
   @override
   Widget build(BuildContext context) {
     return childlist.isEmpty
-        ? Center(child: CircularProgressIndicator())
+        ? Center(
+            child: Text(
+            'No new admissions',
+          ))
         : SingleChildScrollView(
             child: Column(
               children: [

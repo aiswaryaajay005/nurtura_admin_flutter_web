@@ -1,13 +1,49 @@
+import 'package:admin_app/components/form_validation.dart';
+import 'package:admin_app/main.dart';
+import 'package:admin_app/screens/dashboard.dart';
 import 'package:admin_app/screens/homescreen.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _emailcontroller = TextEditingController();
+  final TextEditingController _passwordcontroller = TextEditingController();
+  Future<void> login() async {
+    try {
+      final auth = await supabase.auth.signInWithPassword(
+          password: _passwordcontroller.text, email: _emailcontroller.text);
+      final admin = await supabase
+          .from('tbl_admin')
+          .select()
+          .eq('id', auth.user!.id)
+          .single();
+      if (admin.isNotEmpty) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Homepage(),
+            ));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Enter Valid Credentials")));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Enter Valid Credentials")));
+      print("Error: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(),
       body: Container(
         padding: EdgeInsets.all(30),
         decoration: BoxDecoration(
@@ -51,69 +87,79 @@ class LoginPage extends StatelessWidget {
                           height: 20,
                         ),
                         Form(
+                            key: _formKey,
                             child: ListView(
-                          shrinkWrap: true,
-                          children: [
-                            Text(
-                              "Email",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'Montserrat-Regular',
-                              ),
-                            ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Enter your email ID',
-                                  suffixIcon: Icon(Icons.email_outlined),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.purple))),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Text(
-                              'Password',
-                              style: TextStyle(
-                                  fontFamily: 'Montserrat-Regular',
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  hintText: 'Enter your password',
-                                  suffixIcon: Icon(Icons.visibility),
-                                  focusedBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.purple))),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.deepPurple,
-                              ),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Homepage(),
-                                    ));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
-                                child: Text(
-                                  'Login',
+                              shrinkWrap: true,
+                              children: [
+                                Text(
+                                  "Email",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Montserrat-Regular',
+                                  ),
+                                ),
+                                TextFormField(
+                                  validator: (value) =>
+                                      FormValidation.validateEmail(value),
+                                  controller: _emailcontroller,
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Enter your email ID',
+                                      suffixIcon: Icon(Icons.email_outlined),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.purple))),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Text(
+                                  'Password',
                                   style: TextStyle(
                                       fontFamily: 'Montserrat-Regular',
-                                      color: Colors.white),
+                                      fontWeight: FontWeight.bold),
                                 ),
-                              ),
-                            )
-                          ],
-                        ))
+                                TextFormField(
+                                  validator: (value) =>
+                                      FormValidation.validatePassword(value),
+                                  controller: _passwordcontroller,
+                                  decoration: InputDecoration(
+                                      border: OutlineInputBorder(),
+                                      hintText: 'Enter your password',
+                                      suffixIcon: Icon(Icons.visibility),
+                                      focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: Colors.purple))),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.deepPurple,
+                                  ),
+                                  onPressed: () {
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //       builder: (context) => Homepage(),
+                                    //     ));
+                                    if (_formKey.currentState!.validate()) {
+                                      login();
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Text(
+                                      'Login',
+                                      style: TextStyle(
+                                          fontFamily: 'Montserrat-Regular',
+                                          color: Colors.white),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ))
                       ],
                     ),
                   ),

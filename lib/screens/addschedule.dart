@@ -1,3 +1,4 @@
+import 'package:admin_app/components/form_validation.dart';
 import 'package:admin_app/main.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,8 @@ class AddSchedule extends StatefulWidget {
 }
 
 class _AddScheduleState extends State<AddSchedule> {
+  final _formKey = GlobalKey<FormState>();
+
   TextEditingController _descriptioncontroller = TextEditingController();
   TextEditingController _stimecontroller = TextEditingController();
   TextEditingController _etimecontroller = TextEditingController();
@@ -39,6 +42,7 @@ class _AddScheduleState extends State<AddSchedule> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
+        key: _formKey,
         child: SingleChildScrollView(
           // Allows scrolling if content overflows
           child: Padding(
@@ -60,6 +64,7 @@ class _AddScheduleState extends State<AddSchedule> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                   child: TextFormField(
+                    validator: (value) => FormValidation.validateValue(value),
                     controller: _descriptioncontroller,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -78,6 +83,7 @@ class _AddScheduleState extends State<AddSchedule> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                   child: TextFormField(
+                    validator: (value) => FormValidation.validateValue(value),
                     controller: _stimecontroller,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -96,6 +102,7 @@ class _AddScheduleState extends State<AddSchedule> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                   child: TextFormField(
+                    validator: (value) => FormValidation.validateValue(value),
                     controller: _etimecontroller,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
@@ -115,7 +122,9 @@ class _AddScheduleState extends State<AddSchedule> {
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      insertData();
+                      if (_formKey.currentState!.validate()) {
+                        insertData();
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       padding:

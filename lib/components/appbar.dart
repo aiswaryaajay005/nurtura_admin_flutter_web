@@ -1,3 +1,6 @@
+import 'package:admin_app/main.dart';
+import 'package:admin_app/screens/login.dart';
+import 'package:admin_app/screens/login_page.dart';
 import 'package:flutter/material.dart';
 
 class MyAppbar extends StatelessWidget {
@@ -17,9 +20,21 @@ class MyAppbar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          CircleAvatar(
-            child: Icon(Icons.notifications),
-            backgroundColor: Colors.white,
+          InkWell(
+            onTap: () async {
+              await supabase.auth.signOut();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LoginPage(),
+                ),
+                (Route<dynamic> route) => false,
+              );
+            },
+            child: CircleAvatar(
+              child: Icon(Icons.logout),
+              backgroundColor: Colors.white,
+            ),
           ),
           SizedBox(width: 20),
         ],

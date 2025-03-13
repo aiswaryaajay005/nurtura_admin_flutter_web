@@ -15,20 +15,26 @@ class _MySideBarState extends State<MySideBar> {
     "Dashboard",
     "Manage Staff",
     "View Staff",
+    "Staff Attendence",
     "Add Event",
     "View Event",
     "Event Participants",
     "Add Meal",
     "View Meal Details",
     "View Children",
-    "Accepted",
-    "Rejected",
+    "Accepted Children",
+    // "Rejected Children",
+    "Attendence",
+    "Add Important Notes",
+    "View & Reply complaints",
+    "Payment View"
   ];
 
   final List<IconData> icons = [
     Icons.dashboard,
     Icons.person,
     Icons.people,
+    Icons.person_search_sharp,
     Icons.event,
     Icons.calendar_today,
     Icons.groups,
@@ -36,7 +42,11 @@ class _MySideBarState extends State<MySideBar> {
     Icons.food_bank_outlined,
     Icons.child_care,
     Icons.check_circle,
-    Icons.cancel,
+    // Icons.cancel,
+    Icons.check_box_sharp,
+    Icons.import_contacts_rounded,
+    Icons.label_important,
+    Icons.payments_outlined
   ];
 
   @override
