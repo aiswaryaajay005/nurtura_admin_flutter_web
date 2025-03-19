@@ -68,15 +68,53 @@ class _ViewEventState extends State<ViewEvent> {
                     DataColumn(label: Text("Event Name")),
                     DataColumn(label: Text("Event Date")),
                     DataColumn(label: Text("Event details")),
+                    DataColumn(label: Text("Status"))
                   ],
                   rows: eventlist.asMap().entries.map((entry) {
-                    int index = entry.key + 1; // Staff index
+                    int index = entry.key + 1; // Event index
                     Map<String, dynamic> event = entry.value;
+
+                    DateTime eventDate = DateTime.parse(event['event_date']);
+                    DateTime today = DateTime.now();
+
+                    String eventStatus;
+                    Color statusColor;
+
+                    if (eventDate.isAtSameMomentAs(today) ||
+                        (eventDate.year == today.year &&
+                            eventDate.month == today.month &&
+                            eventDate.day == today.day)) {
+                      eventStatus = "Happening Now";
+                      statusColor = Colors.orange;
+                    } else if (eventDate.isAfter(today)) {
+                      eventStatus = "Happening Soon";
+                      statusColor = Colors.blue;
+                    } else {
+                      eventStatus = "Completed";
+                      statusColor = Colors.grey;
+                    }
+
                     return DataRow(cells: [
                       DataCell(Text(index.toString())), // Serial Number
                       DataCell(Text(event['event_name'] ?? 'No Name')),
                       DataCell(Text(event['event_date'] ?? 'No Date')),
                       DataCell(Text(event['event_details'] ?? 'No Details')),
+                      DataCell(
+                        Container(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            eventStatus,
+                            style: TextStyle(
+                                color: statusColor,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
                     ]);
                   }).toList(),
                 ),

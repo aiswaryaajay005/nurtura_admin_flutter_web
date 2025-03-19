@@ -31,7 +31,7 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
     }
   }
 
-  Future<void> respondToComplaint(String complaintId, String response) async {
+  Future<void> respondToComplaint(int complaintId, String response) async {
     try {
       await supabase.from('tbl_complaints').update({
         'response': response,
@@ -51,18 +51,16 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
   Widget build(BuildContext context) {
     return _complaints.isEmpty
         ? Center(child: Text("No complaints yet!"))
-        : ListView.builder(
-            shrinkWrap: true,
-            itemCount: _complaints.length,
-            itemBuilder: (context, index) {
-              final complaint = _complaints[index];
-              TextEditingController _responseController =
-                  TextEditingController();
+        : Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: _complaints.length,
+              itemBuilder: (context, index) {
+                final complaint = _complaints[index];
+                TextEditingController _responseController =
+                    TextEditingController();
 
-              return SizedBox(
-                height: 400,
-                width: 400,
-                child: Card(
+                return Card(
                   margin: EdgeInsets.all(10),
                   child: Padding(
                     padding: EdgeInsets.all(10),
@@ -99,9 +97,9 @@ class _AdminComplaintsPageState extends State<AdminComplaintsPage> {
                       ],
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
   }
 }

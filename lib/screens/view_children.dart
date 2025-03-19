@@ -3,6 +3,7 @@
 import 'package:admin_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewChildren extends StatefulWidget {
   const ViewChildren({super.key});
@@ -33,15 +34,64 @@ class _ViewChildrenState extends State<ViewChildren> {
   }
 
   Future<void> rejectStatus(int childId) async {
-    try {
-      await supabase
-          .from('tbl_child')
-          .update({'child_status': 2}).eq('id', childId);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Rejected!")));
-    } catch (e) {
-      print("Error: $e");
-    }
+    TextEditingController reasonController = TextEditingController();
+
+    // Show a dialog to get rejection reason
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Reject Admission"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Please enter a reason for rejection:"),
+              SizedBox(height: 10),
+              TextField(
+                controller: reasonController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: "Enter reason",
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () async {
+                String reason = reasonController.text.trim();
+                if (reason.isNotEmpty) {
+                  try {
+                    await supabase.from('tbl_child').update({
+                      'child_status': 2,
+                      'rejection_reason': reason
+                    }).eq('id', childId);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Rejected: $reason")),
+                    );
+                  } catch (e) {
+                    print("Error: $e");
+                  }
+                  Navigator.of(context).pop(); // Close dialog
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Please enter a rejection reason.")),
+                  );
+                }
+              },
+              child: Text("Confirm"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> fetchChild() async {
@@ -57,13 +107,53 @@ class _ViewChildrenState extends State<ViewChildren> {
     }
   }
 
+  void showChildDetails(Map<String, dynamic> child) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Child Details"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(child['child_photo'] ?? '', height: 150),
+              SizedBox(height: 10),
+              Text("Name: ${child['child_name'] ?? ''}"),
+              Text("Gender: ${child['child_gender'] ?? ''}"),
+              Text("DOB: ${child['child_dob'] ?? ''}"),
+              Text("Allergy: ${child['child_allergy'] ?? ''}"),
+              SizedBox(height: 10),
+              if (child['child_docs'] != null)
+                ElevatedButton(
+                  onPressed: () async {
+                    final url = child['child_docs'];
+                    if (await canLaunchUrl(Uri.parse(url))) {
+                      await launchUrl(Uri.parse(url));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Cannot open document")),
+                      );
+                    }
+                  },
+                  child: Text("View Document"),
+                ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Close"),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return childlist.isEmpty
-        ? Center(
-            child: Text(
-            'No new admissions',
-          ))
+        ? Center(child: Text('No new admissions'))
         : SingleChildScrollView(
             child: Column(
               children: [
@@ -72,157 +162,57 @@ class _ViewChildrenState extends State<ViewChildren> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "New Admissions",
-                    style: TextStyle(
-                        color: Colors.deepPurple,
-                        fontFamily: 'Montserrat-Bold',
-                        fontSize: 30),
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(height: 20),
                 DataTable(
-                  columnSpacing: 30,
-                  headingRowHeight: 50,
-                  border: TableBorder(
-                    top: BorderSide(color: Colors.grey[300]!, width: 1),
-                    bottom: BorderSide(color: Colors.grey[300]!, width: 1),
-                    left: BorderSide(color: Colors.grey[300]!, width: 1),
-                    right: BorderSide(color: Colors.grey[300]!, width: 1),
-                    horizontalInside: BorderSide.none, // Removes row lines
-                  ),
-                  headingTextStyle: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.deepPurple),
                   columns: [
-                    DataColumn(
-                        label: Text(
-                      "C.No",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Child Name",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Child Gender",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Child DOB",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Child Allergy Details",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Action",
-                      style: TextStyle(
-                        fontFamily: 'Montserrat-Regular',
-                      ),
-                    )),
+                    DataColumn(label: Text("C.No")),
+                    DataColumn(label: Text("Child Name")),
+                    DataColumn(label: Text("Actions")),
                   ],
-                  rows: childlist.asMap().entries.map((entry) {
-                    int index = entry.key + 1; // Staff index
-                    Map<String, dynamic> child = entry.value;
-                    return DataRow(cells: [
-                      DataCell(Text(index.toString())), // Serial Number
-                      DataCell(Text(
-                        child['child_name'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
-                      DataCell(Text(
-                        child['child_gender'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
-                      DataCell(Text(
-                        child['child_dob'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
-                      DataCell(Text(
-                        child['child_allergy'] ?? '',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
-                      DataCell(Row(
-                        children: [
-                          TextButton(
-                            style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                    Colors.deepPurple[50]),
-                                foregroundColor: WidgetStatePropertyAll(
-                                  Colors.deepPurple,
-                                ),
-                                padding: WidgetStatePropertyAll(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                ),
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                )),
-                            onPressed: () {
-                              int childId = child['id'];
-                              acceptStatus(childId);
-                            },
-                            child: Text(
-                              'Accept',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat-Regular',
+                  rows: childlist.map((child) {
+                    int index = childlist.indexOf(child) + 1;
+                    return DataRow(
+                      cells: [
+                        DataCell(Text(index.toString())),
+                        DataCell(Text(child['child_name'] ?? '')),
+                        DataCell(
+                          Row(
+                            children: [
+                              // View Details Button
+                              TextButton(
+                                onPressed: () => showChildDetails(child),
+                                child: Text("View Details"),
                               ),
-                            ),
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                    Colors.deepPurple[50]),
-                                foregroundColor: WidgetStatePropertyAll(
-                                  Colors.deepPurple,
+                              SizedBox(width: 10),
+                              // Accept Button
+                              ElevatedButton(
+                                onPressed: () {
+                                  acceptStatus(child['id']);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
                                 ),
-                                padding: WidgetStatePropertyAll(
-                                  EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                ),
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                )),
-                            onPressed: () {
-                              int childId = child['id'];
-                              rejectStatus(childId);
-                            },
-                            child: Text(
-                              'Reject',
-                              style: TextStyle(
-                                fontFamily: 'Montserrat-Regular',
+                                child: Text("Accept"),
                               ),
-                            ),
+                              SizedBox(width: 10),
+                              // Reject Button
+                              ElevatedButton(
+                                onPressed: () {
+                                  rejectStatus(child['id']);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                ),
+                                child: Text("Reject"),
+                              ),
+                            ],
                           ),
-                        ],
-                      )),
-                    ]);
+                        ),
+                      ],
+                    );
                   }).toList(),
                 ),
               ],

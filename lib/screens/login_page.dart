@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                                 TextFormField(
                                   validator: (value) =>
-                                      FormValidation.validatePassword(value),
+                                      FormValidation.validateValue(value),
                                   controller: _passwordcontroller,
                                   decoration: InputDecoration(
                                       border: OutlineInputBorder(),

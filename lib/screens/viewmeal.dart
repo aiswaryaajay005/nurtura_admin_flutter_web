@@ -10,6 +10,7 @@ class ViewMeal extends StatefulWidget {
 
 class _ViewMealState extends State<ViewMeal> {
   List<Map<String, dynamic>> meallist = [];
+
   @override
   void initState() {
     super.initState();
@@ -19,13 +20,22 @@ class _ViewMealState extends State<ViewMeal> {
   Future<void> fetchmeal() async {
     try {
       final response = await supabase.from("tbl_mealmanagement").select();
-
       setState(() {
         meallist = response;
       });
     } catch (e) {
-      // ignore: avoid_print
       print("Error: $e");
+    }
+  }
+
+  Future<void> deleteMeal(int mealId) async {
+    try {
+      await supabase.from("tbl_mealmanagement").delete().match({'id': mealId});
+      setState(() {
+        meallist.removeWhere((meal) => meal['id'] == mealId);
+      });
+    } catch (e) {
+      print("Error deleting meal: $e");
     }
   }
 
@@ -51,58 +61,32 @@ class _ViewMealState extends State<ViewMeal> {
                 DataTable(
                   columnSpacing: 30,
                   headingRowHeight: 50,
-                  border: TableBorder(
-                    top: BorderSide(color: Colors.grey[300]!, width: 1),
-                    bottom: BorderSide(color: Colors.grey[300]!, width: 1),
-                    left: BorderSide(color: Colors.grey[300]!, width: 1),
-                    right: BorderSide(color: Colors.grey[300]!, width: 1),
-                    horizontalInside: BorderSide.none, // Removes row lines
-                  ),
+                  border: TableBorder.all(color: Colors.grey[300]!),
                   headingTextStyle: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                     color: Colors.deepPurple,
                   ),
                   columns: [
-                    DataColumn(
-                        label: Text(
-                      "M.No",
-                      style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                          color: Colors.deepPurple),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Meal day",
-                      style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                          color: Colors.deepPurple),
-                    )),
-                    DataColumn(
-                        label: Text(
-                      "Meal description",
-                      style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                          color: Colors.deepPurple),
-                    )),
+                    DataColumn(label: Text("M.No")),
+                    DataColumn(label: Text("Meal day")),
+                    DataColumn(label: Text("Meal description")),
+                    DataColumn(label: Text("Actions")),
                   ],
                   rows: meallist.asMap().entries.map((entry) {
-                    int index = entry.key + 1; // Staff index
+                    int index = entry.key + 1;
                     Map<String, dynamic> meal = entry.value;
                     return DataRow(cells: [
-                      DataCell(Text(index.toString())), // Serial Number
-                      DataCell(Text(
-                        meal['meal_day'] ?? 'No Day',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
+                      DataCell(Text(index.toString())),
+                      DataCell(Text(meal['meal_day'] ?? 'No Day')),
+                      DataCell(
+                          Text(meal['meal_description'] ?? 'No Description')),
+                      DataCell(
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.deepPurple),
+                          onPressed: () => deleteMeal(meal['id']),
                         ),
-                      )),
-                      DataCell(Text(
-                        meal['meal_description'] ?? 'No Description',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat-Regular',
-                        ),
-                      )),
+                      ),
                     ]);
                   }).toList(),
                 ),

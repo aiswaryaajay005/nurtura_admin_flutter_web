@@ -12,7 +12,7 @@ class AddSchedule extends StatefulWidget {
 
 class _AddScheduleState extends State<AddSchedule> {
   final _formKey = GlobalKey<FormState>();
-
+  String? selectedValue;
   TextEditingController _descriptioncontroller = TextEditingController();
   TextEditingController _stimecontroller = TextEditingController();
   TextEditingController _etimecontroller = TextEditingController();
@@ -22,11 +22,17 @@ class _AddScheduleState extends State<AddSchedule> {
         'task_description': _descriptioncontroller.text,
         'start_time': _stimecontroller.text,
         'end_time': _etimecontroller.text,
+        'age_category': selectedValue,
         'staff_id': widget.id
       });
+
       _descriptioncontroller.clear();
       _stimecontroller.clear();
       _etimecontroller.clear();
+      setState(() {
+        selectedValue = null;
+      });
+
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Data Inserted!")));
     } catch (e) {
@@ -114,6 +120,45 @@ class _AddScheduleState extends State<AddSchedule> {
                         fontFamily: 'Montserrat-Regular',
                       ),
                     ),
+                  ),
+                ),
+                SizedBox(height: 20),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      labelText: 'Age Category',
+                      labelStyle: TextStyle(
+                        color: Colors.deepPurple,
+                        fontFamily: 'Montserrat-Regular',
+                      ),
+                    ),
+                    items: [
+                      DropdownMenuItem(
+                        value: "1",
+                        child: Text("1"),
+                      ),
+                      DropdownMenuItem(
+                        value: "2",
+                        child: Text("2"),
+                      ),
+                      DropdownMenuItem(
+                        value: "3",
+                        child: Text("3"),
+                      ),
+                    ],
+                    value: selectedValue,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedValue = value;
+                      });
+                    },
+                    validator: (value) =>
+                        value == null ? 'Please select an age category' : null,
                   ),
                 ),
                 SizedBox(height: 20),

@@ -4,13 +4,18 @@ class FormValidation {
   // Email Validation
   static String? validateEmail(String? email) {
     if (email == null || email.isEmpty) {
-      return 'Please enter an email';
+      return 'Oops! You forgot to enter your email.';
     }
-    String pattern =
-        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'; // Regular expression for email
+    if (!email.contains('@')) {
+      return 'Missing "@" symbol! Are you sure this is an email?';
+    }
+    if (!email.contains('.')) {
+      return 'Your email is incomplete! A "." is required (e.g., .com, .net, .org)';
+    }
+    String pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
     RegExp regExp = RegExp(pattern);
     if (!regExp.hasMatch(email)) {
-      return 'Please enter a valid email address';
+      return 'This doesn\'t look like a real email. Double-check the format!';
     }
     return null;
   }
@@ -18,13 +23,35 @@ class FormValidation {
   // Password Validation
   static String? validatePassword(String? password) {
     if (password == null || password.isEmpty) {
-      return 'Please enter a password';
+      return 'Password cannot be empty';
     }
-    // Check for minimum 6 characters
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters';
+
+    // Password must be at least 8 characters
+    if (password.length < 8) {
+      return 'Password must be at least 8 characters long';
     }
-    return null;
+
+    // Check for at least one uppercase letter
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      return 'Password must contain at least one uppercase letter (A-Z)';
+    }
+
+    // Check for at least one lowercase letter
+    if (!RegExp(r'[a-z]').hasMatch(password)) {
+      return 'Password must contain at least one lowercase letter (a-z)';
+    }
+
+    // Check for at least one number
+    if (!RegExp(r'[0-9]').hasMatch(password)) {
+      return 'Password must contain at least one number (0-9)';
+    }
+
+    // Check for at least one special character
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password)) {
+      return 'Password must include at least one special character (!@#\$%^&*)';
+    }
+
+    return null; // Password is valid
   }
 
   // Confirm Password Validation

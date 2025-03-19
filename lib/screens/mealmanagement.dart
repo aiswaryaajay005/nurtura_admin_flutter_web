@@ -141,7 +141,7 @@ class _MealPageState extends State<MealPage> {
             child: ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  insertData;
+                  insertData();
                 }
               },
               style: ElevatedButton.styleFrom(
