@@ -42,7 +42,7 @@ class _ViewMealState extends State<ViewMeal> {
   @override
   Widget build(BuildContext context) {
     return meallist.isEmpty
-        ? Center(child: CircularProgressIndicator())
+        ? Center(child: CircularProgressIndicator(color: Colors.deepPurple))
         : SingleChildScrollView(
             child: Column(
               children: [
@@ -52,43 +52,61 @@ class _ViewMealState extends State<ViewMeal> {
                   child: Text(
                     "Staff Details",
                     style: TextStyle(
-                        color: Colors.deepPurple,
-                        fontFamily: 'Montserrat-Bold',
-                        fontSize: 30),
+                      color: Colors.deepPurple,
+                      fontFamily: 'Montserrat-Bold',
+                      fontSize: 30,
+                    ),
                   ),
                 ),
                 SizedBox(height: 20),
-                DataTable(
-                  columnSpacing: 30,
-                  headingRowHeight: 50,
-                  border: TableBorder.all(color: Colors.grey[300]!),
-                  headingTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.deepPurple,
-                  ),
-                  columns: [
-                    DataColumn(label: Text("M.No")),
-                    DataColumn(label: Text("Meal day")),
-                    DataColumn(label: Text("Meal description")),
-                    DataColumn(label: Text("Actions")),
-                  ],
-                  rows: meallist.asMap().entries.map((entry) {
-                    int index = entry.key + 1;
-                    Map<String, dynamic> meal = entry.value;
-                    return DataRow(cells: [
-                      DataCell(Text(index.toString())),
-                      DataCell(Text(meal['meal_day'] ?? 'No Day')),
-                      DataCell(
-                          Text(meal['meal_description'] ?? 'No Description')),
-                      DataCell(
-                        IconButton(
-                          icon: Icon(Icons.delete, color: Colors.deepPurple),
-                          onPressed: () => deleteMeal(meal['id']),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: meallist.length,
+                  itemBuilder: (context, index) {
+                    final meal = meallist[index];
+                    final mealIndex = index + 1;
+
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                      elevation: 4,
+                      child: ExpansionTile(
+                        title: Text(
+                          'Meal $mealIndex - ${meal['meal_day'] ?? 'No Day'}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.deepPurple,
+                          ),
                         ),
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Description: ${meal['meal_description'] ?? 'No Description'}',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.delete,
+                                          color: Colors.deepPurple),
+                                      onPressed: () => deleteMeal(meal['id']),
+                                      tooltip: 'Delete Meal',
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ]);
-                  }).toList(),
+                    );
+                  },
                 ),
               ],
             ),

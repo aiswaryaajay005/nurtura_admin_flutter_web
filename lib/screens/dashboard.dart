@@ -23,18 +23,18 @@ class Dashboard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _dashboardCard('Total Children', '120', Colors.deepPurple),
-              _dashboardCard('Total Staff', '30', Colors.deepPurple),
-              _dashboardCard('Pending Complaints', '5', Colors.deepPurple),
+              _dashboardCard('Total Children', '20', Colors.deepPurple),
+              _dashboardCard('Total Staff', '2', Colors.deepPurple),
+              _dashboardCard('Pending Complaints', '1', Colors.deepPurple),
             ],
           ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _dashboardCard('Resolved Complaints', '45', Colors.deepPurple),
-              _dashboardCard('New Enrollments', '15', Colors.deepPurple),
-              _dashboardCard('Active Classes', '10', Colors.deepPurple),
+              _dashboardCard('Resolved Complaints', '5', Colors.deepPurple),
+              _dashboardCard('New Enrollments', '3', Colors.deepPurple),
+              _dashboardCard('Active Classes', '3', Colors.deepPurple),
             ],
           ),
           const SizedBox(height: 30),

@@ -2,6 +2,7 @@ import 'package:admin_app/components/appbar.dart';
 import 'package:admin_app/components/sidebar.dart';
 import 'package:admin_app/screens/accepted_children.dart';
 import 'package:admin_app/screens/admin_attendence_view.dart';
+import 'package:admin_app/screens/cash_fee_payment.dart';
 import 'package:admin_app/screens/complaints_view.dart';
 import 'package:admin_app/screens/dashboard.dart';
 import 'package:admin_app/screens/event_participation.dart';
@@ -10,6 +11,7 @@ import 'package:admin_app/screens/important_notes.dart';
 import 'package:admin_app/screens/manage_staff.dart';
 import 'package:admin_app/screens/mealmanagement.dart';
 import 'package:admin_app/screens/rejected_children.dart';
+import 'package:admin_app/screens/staff_leave.dart';
 import 'package:admin_app/screens/view_children.dart';
 import 'package:admin_app/screens/view_payments.dart';
 import 'package:admin_app/screens/viewevent.dart';
@@ -32,6 +34,7 @@ class _HomepageState extends State<Homepage> {
     Dashboard(),
     ManageStaff(),
     ViewStaff(),
+    ViewStaffLeave(),
     StaffAttendence(),
     EventPage(),
     ViewEvent(),
@@ -44,7 +47,8 @@ class _HomepageState extends State<Homepage> {
     AdminAttendanceCalendar(),
     AddNotePage(),
     AdminComplaintsPage(),
-    ViewPayments()
+    ViewPayments(),
+    CashFeePayment()
   ];
 
   void onSidebarItemTapped(int index) {

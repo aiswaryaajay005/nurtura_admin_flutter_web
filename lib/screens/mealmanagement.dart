@@ -121,7 +121,7 @@ class _MealPageState extends State<MealPage> {
             child: TextFormField(
               validator: (value) => FormValidation.validateValue(value),
               controller: _detailscontroller,
-              maxLines: 3,
+              maxLines: 10,
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),

@@ -15,8 +15,9 @@ class _MySideBarState extends State<MySideBar> {
       {"title": "Dashboard", "icon": Icons.dashboard},
     ],
     "Staff Management": [
-      {"title": "Manage Staff", "icon": Icons.person},
+      {"title": "Manage Staff Registrations", "icon": Icons.person},
       {"title": "View Staff", "icon": Icons.people},
+      {"title": "View Leave Details", "icon": Icons.people},
       {"title": "Staff Attendance", "icon": Icons.person_search_sharp},
     ],
     "Events": [
@@ -39,6 +40,7 @@ class _MySideBarState extends State<MySideBar> {
     "Complaints & Payments": [
       {"title": "View & Reply Complaints", "icon": Icons.label_important},
       {"title": "Payment View", "icon": Icons.payments_outlined},
+      {"title": "Cash Payments", "icon": Icons.wallet},
     ],
   };
 

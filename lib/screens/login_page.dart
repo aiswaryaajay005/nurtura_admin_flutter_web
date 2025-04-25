@@ -1,6 +1,5 @@
 import 'package:admin_app/components/form_validation.dart';
 import 'package:admin_app/main.dart';
-import 'package:admin_app/screens/dashboard.dart';
 import 'package:admin_app/screens/homescreen.dart';
 import 'package:flutter/material.dart';
 
@@ -41,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  bool _obscure = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,13 +120,26 @@ class _LoginPageState extends State<LoginPage> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 TextFormField(
+                                  obscureText: _obscure,
                                   validator: (value) =>
                                       FormValidation.validateValue(value),
                                   controller: _passwordcontroller,
                                   decoration: InputDecoration(
                                       border: OutlineInputBorder(),
                                       hintText: 'Enter your password',
-                                      suffixIcon: Icon(Icons.visibility),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          _obscure
+                                              ? Icons.visibility_off
+                                              : Icons.remove_red_eye_outlined,
+                                          color: Colors.deepPurple,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscure = !_obscure;
+                                          });
+                                        },
+                                      ),
                                       focusedBorder: OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: Colors.purple))),

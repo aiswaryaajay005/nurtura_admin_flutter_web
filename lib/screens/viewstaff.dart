@@ -20,7 +20,8 @@ class _ViewStaffState extends State<ViewStaff> {
 
   Future<void> fetchstaff() async {
     try {
-      final response = await supabase.from("tbl_staff").select();
+      final response =
+          await supabase.from("tbl_staff").select().eq('staff_status', 3);
 
       print("Fetched Staff: $response"); // Debugging
 
