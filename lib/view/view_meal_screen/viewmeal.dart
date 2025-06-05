@@ -34,7 +34,7 @@ class _ViewMealState extends State<ViewMeal> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Staff Details",
+                    "Meal Details",
                     style: TextStyle(
                       color: Colors.deepPurple,
                       fontFamily: 'Montserrat-Bold',
